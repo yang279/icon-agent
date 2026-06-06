@@ -1,0 +1,176 @@
+{
+  "nid": 1,
+  "tag": "div",
+  "depth": 2,
+  "rect": { "x": 0, "y": 0, "w": 375, "h": 812 },
+  "id": "Page/Login",
+  "semantic": "container",
+  "label": "登录页根容器",
+  "confidence": "high",
+  "style": {
+    "display": "flex",
+    "flexDirection": "column",
+    "backgroundColor": "#F5F5F5FF"
+  },
+  "children": [
+
+    {
+      "nid": 2,
+      "tag": "div",
+      "depth": 3,
+      "rect": { "x": 0, "y": 0, "w": 375, "h": 220 },
+      "semantic": "container",
+      "label": "顶部渐变 Banner 区",
+      "confidence": "high",
+      "style": {
+        "backgroundImage": "linear-gradient(180deg, #3478F6FF 0%, #0A2E8AFF 100%)"
+      },
+      "children": [
+        {
+          "nid": 3,
+          "tag": "div",
+          "depth": 4,
+          "rect": { "x": 153, "y": 56, "w": 68, "h": 68 },
+          "semantic": "container",
+          "label": "Logo 圆形背景",
+          "confidence": "high",
+          "style": {
+            "borderRadius": "50%",
+            "backgroundColor": "rgba(255,255,255,0.2)"
+          }
+        },
+        {
+          "nid": 4,
+          "tag": "span",
+          "depth": 4,
+          "rect": { "x": 118, "y": 148, "w": 139, "h": 32 },
+          "text": "MyApp",
+          "semantic": "heading",
+          "label": "应用名称标题",
+          "confidence": "high",
+          "style": {
+            "fontSize": "24px",
+            "fontWeight": "700",
+            "color": "#FFFFFFFF",
+            "lineHeight": "32px",
+            "textAlign": "center"
+          }
+        }
+      ]
+    },
+
+    {
+      "nid": 5,
+      "tag": "div",
+      "depth": 3,
+      "rect": { "x": 20, "y": 244, "w": 335, "h": 312 },
+      "semantic": "card",
+      "label": "登录表单卡片",
+      "confidence": "high",
+      "style": {
+        "display": "flex",
+        "flexDirection": "column",
+        "gap": "16px",
+        "backgroundColor": "#FFFFFFFF",
+        "borderRadius": "16px",
+        "boxShadow": "0px 8px 24px rgba(0,0,0,0.1)"
+      },
+      "children": [
+        {
+          "nid": 6,
+          "tag": "span",
+          "depth": 4,
+          "rect": { "x": 40, "y": 276, "w": 295, "h": 32 },
+          "text": "欢迎登录",
+          "semantic": "heading",
+          "label": "登录页主标题",
+          "confidence": "high",
+          "style": {
+            "fontSize": "22px",
+            "fontWeight": "700",
+            "color": "#1A1A1AFF",
+            "lineHeight": "32px"
+          }
+        },
+        {
+          "nid": 7,
+          "tag": "div",
+          "depth": 4,
+          "rect": { "x": 40, "y": 324, "w": 295, "h": 48 },
+          "semantic": "input",
+          "label": "用户名输入框",
+          "confidence": "high",
+          "style": {}
+        },
+        {
+          "nid": 8,
+          "tag": "div",
+          "depth": 4,
+          "rect": { "x": 40, "y": 388, "w": 295, "h": 48 },
+          "semantic": "input",
+          "label": "密码输入框",
+          "confidence": "high",
+          "style": {}
+        },
+        {
+          "nid": 9,
+          "tag": "div",
+          "depth": 4,
+          "rect": { "x": 40, "y": 472, "w": 295, "h": 48 },
+          "semantic": "button",
+          "label": "登录按钮（主操作）",
+          "confidence": "high",
+          "style": {}
+        }
+      ]
+    },
+
+    {
+      "nid": 10,
+      "tag": "div",
+      "depth": 3,
+      "rect": { "x": 0, "y": 580, "w": 375, "h": 40 },
+      "semantic": "container",
+      "label": "底部辅助链接区",
+      "confidence": "high",
+      "style": {
+        "display": "flex",
+        "justifyContent": "space-evenly",
+        "alignItems": "center"
+      },
+      "children": [
+        {
+          "nid": 11,
+          "tag": "span",
+          "depth": 4,
+          "rect": { "x": 24, "y": 590, "w": 80, "h": 20 },
+          "text": "忘记密码？",
+          "semantic": "text",
+          "label": "忘记密码跳转链接",
+          "confidence": "high",
+          "style": {
+            "fontSize": "14px",
+            "color": "#3478F6FF",
+            "textAlign": "center"
+          }
+        },
+        {
+          "nid": 12,
+          "tag": "span",
+          "depth": 4,
+          "rect": { "x": 271, "y": 590, "w": 80, "h": 20 },
+          "text": "立即注册",
+          "semantic": "text",
+          "label": "立即注册跳转链接",
+          "confidence": "high",
+          "style": {
+            "fontSize": "14px",
+            "color": "#3478F6FF",
+            "textAlign": "center"
+          }
+        }
+      ]
+    }
+
+  ]
+}
