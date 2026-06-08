@@ -70,7 +70,10 @@ async function parseLabel(label) {
     ],
     temperature: 0.1,
     max_tokens: 100,
-    reasoning_effort: 'none',
+  }, {
+    extraBody: {
+      thinking: { type: 'disabled' },
+    },
   });
   const raw = response.choices[0].message.content.trim();
   try {

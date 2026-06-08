@@ -4,12 +4,15 @@
   "description": "Icon search service using AI keyword extraction and exact matching",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "mcp": "node src/mcpServer.js"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "multer": "^2.1.1",
-    "openai": "^6.42.0"
+    "openai": "^6.42.0",
+    "zod": "^4.4.3"
   }
 }
