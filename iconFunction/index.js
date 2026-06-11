@@ -1,3 +1,5 @@
+const { optimize } = require('svgo');
+
 function modifySvg(svg, size, colorValue, stroke, style) {
   let result = svg;
 
@@ -32,7 +34,38 @@ function modifySvg(svg, size, colorValue, stroke, style) {
     }
   }
 
-  return result;
+  if (!result.trim().startsWith('<svg')) {
+    const match = result.match(/<svg[^>]*>.*?<\/svg>/s);
+    if (match) {
+      result = match[0];
+    }
+  }
+
+  result = result.replace(/rule-config="[^"]*"/g, '');
+
+  const optimized = optimize(result, {
+    plugins: [
+      'removeDoctype',
+      'removeXMLProcInst',
+      'removeComments',
+      'removeMetadata',
+      'removeEditorsNSData',
+      'cleanupAttrs',
+      'removeStyleElement',
+      'removeEmptyAttrs',
+      'removeEmptyContainers',
+      'minifyStyles',
+      'collapseGroups',
+      'removeUnusedNS',
+      'convertStyleToAttrs',
+      'convertColors',
+      'convertTransform',
+      'mergePaths',
+      'sortAttrs',
+    ],
+  });
+
+  return optimized.data;
 }
 
 module.exports = modifySvg;

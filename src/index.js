@@ -13,16 +13,7 @@ const configData = JSON.parse(fs.readFileSync(COLORS_PATH, 'utf-8'));
 const strokeConfig = configData.strokeConfig;
 const colorsData = configData.colors;
 
-function resolveColor(colorPath) {
-  const parts = colorPath.split('/');
-  if (parts.length !== 3) return null;
-  const [domain, style, colorKey] = parts;
-  const domainColors = colorsData[domain]?.[style];
-  if (!domainColors) return null;
-  const colorValue = domainColors[colorKey];
-  if (!colorValue) return null;
-  return colorValue;
-}
+
 
 const server = new McpServer({
   name: 'icon-mcp',
@@ -31,12 +22,30 @@ const server = new McpServer({
 
 server.tool(
   'icon_color_list',
-  '查询可选的颜色配置。返回按领域和风格分类的颜色选项。格式为: 领域/风格/颜色key，例如"领域1/线性/red"。找到想要的颜色后，将完整路径作为color参数传给icon_search。多色key用逗号分隔，如"领域1/线性双色/red,white"。',
-  {},
-  async () => {
+  '查询可选的颜色配置。传入风格和可选的领域，返回该风格下的所有颜色key-value（如"red": "#E53935"）。从中选择一个key对应的色值，作为icon_search的color参数直接传入。',
+  {
+    style: z.enum(['线性', '面性', '线性双色', '面性双色', '圆底托', '方底托']).describe('图标风格'),
+    领域: z.enum(['领域1', '领域2']).optional().describe('限定搜索的领域，不传则搜索所有领域'),
+  },
+  async ({ style, 领域 }) => {
+    const domains = 领域 ? [领域] : Object.keys(colorsData);
+    const merged = {};
+    for (const d of domains) {
+      const styleColors = colorsData[d]?.[style];
+      if (!styleColors) continue;
+      Object.assign(merged, styleColors);
+    }
+    if (Object.keys(merged).length === 0) {
+      return {
+        content: [
+          { type: 'text', text: `未找到风格"${style}"下的颜色配置` },
+        ],
+        isError: true,
+      };
+    }
     return {
       content: [
-        { type: 'text', text: JSON.stringify(colorsData, null, 2) },
+        { type: 'text', text: JSON.stringify(merged, null, 2) },
       ],
     };
   }
@@ -49,7 +58,7 @@ server.tool(
     keyword: z.string().describe('图标关键词，用于直接匹配图标库。例如："下载"、"箭头"、"搜索"'),
     size: z.enum(['12', '24', '48']).describe('图标大小'),
     style: z.enum(['线性', '面性', '线性双色', '面性双色', '圆底托', '方底托']).describe('图标风格'),
-    color: z.string().describe('颜色路径，格式: 领域/风格/颜色key。从icon_color_list返回中选取。例如"领域1/线性/red"，多色"领域1/线性双色/red,white"'),
+    color: z.string().describe('色值字符串，从icon_color_list返回中选取。例如"#E53935"，多色"#E53935,#FFFFFF"'),
   },
   async ({ keyword, size, style, color }) => {
     try {
@@ -64,18 +73,8 @@ server.tool(
         };
       }
 
-      const colorValue = resolveColor(color);
-      if (!colorValue) {
-        return {
-          content: [
-            { type: 'text', text: `颜色路径无效: "${color}"。请先调用icon_color_list查看可用颜色，格式为: 领域/风格/颜色key` },
-          ],
-          isError: true,
-        };
-      }
-
       const stroke = strokeConfig[style]?.[size] || '';
-      const finalSvg = modifySvg(icon.svg, size, colorValue, stroke, style);
+      const finalSvg = modifySvg(icon.svg, size, color, stroke, style);
 
       return {
         content: [
