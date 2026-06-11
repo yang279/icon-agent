@@ -53,18 +53,19 @@ server.tool(
 
 server.tool(
   'icon_search',
-  '根据关键词搜索图标并返回SVG字符串。stroke（描边粗细）由style和size自动计算，无需手动传入。',
+  '根据关键词搜索图标并返回SVG字符串。stroke（描边粗细）由style和size自动计算，无需手动传入。attempt表示当前搜索次数（从1开始），第2次搜索将直接返回结果并提示不能再继续搜索。',
   {
     keyword: z.string().describe('图标关键词，用于直接匹配图标库。例如："下载"、"箭头"、"搜索"'),
     size: z.enum(['12', '24', '48']).describe('图标大小'),
     style: z.enum(['线性', '面性', '线性双色', '面性双色', '圆底托', '方底托']).describe('图标风格'),
     color: z.string().describe('色值字符串，从icon_color_list返回中选取。例如"#E53935"，多色"#E53935,#FFFFFF"'),
+    attempt: z.number().int().min(1).max(2).default(1).describe('搜索次数，从1开始，最多2次。第2次搜索将作为最终结果，不能继续搜索'),
   },
-  async ({ keyword, size, style, color }) => {
+  async ({ keyword, size, style, color, attempt }) => {
     try {
-      const icon = findIcon(keyword);
+      const result = findIcon(keyword, attempt);
 
-      if (!icon) {
+      if (!result.icon) {
         return {
           content: [
             { type: 'text', text: `未找到匹配图标: "${keyword}"` },
@@ -74,11 +75,19 @@ server.tool(
       }
 
       const stroke = strokeConfig[style]?.[size] || '';
-      const finalSvg = modifySvg(icon.svg, size, color, stroke, style);
+      const finalSvg = modifySvg(result.icon.svg, size, color, stroke, style);
+
+      let message = finalSvg;
+      if (!result.exact) {
+        message = `模糊匹配到图标: "${result.icon.name}"（共${result.totalMatches}个匹配，当前第${result.attempt}次搜索）\n${finalSvg}`;
+      }
+      if (attempt >= 2) {
+        message = `⚠️ 已达最大搜索次数(2次)，不能继续搜索。当前匹配图标: "${result.icon.name}"\n${finalSvg}`;
+      }
 
       return {
         content: [
-          { type: 'text', text: finalSvg },
+          { type: 'text', text: message },
         ],
       };
     } catch (err) {
