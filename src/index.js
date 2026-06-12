@@ -106,6 +106,71 @@ app.use(express.json());
 
 const transports = {};
 
+const STYLES = Object.keys(strokeConfig);
+const DOMAINS = Object.keys(colorsData);
+const SIZES = ['12', '24', '48'];
+
+app.get('/getConfig', (req, res) => {
+  res.json({ styles: STYLES, domains: DOMAINS, sizes: SIZES });
+});
+
+app.get('/getColorList', (req, res) => {
+  const style = req.query.style;
+  const domain = req.query.domain;
+
+  if (!style || !STYLES.includes(style)) {
+    return res.status(400).json({ error: `style 参数必传，可选值: ${STYLES.join(', ')}` });
+  }
+
+  const domains = domain ? [domain] : Object.keys(colorsData);
+  if (domain && !colorsData[domain]) {
+    return res.status(400).json({ error: `领域"${domain}"不存在，可选值: ${DOMAINS.join(', ')}` });
+  }
+
+  const merged = {};
+  for (const d of domains) {
+    const styleColors = colorsData[d]?.[style];
+    if (!styleColors) continue;
+    Object.assign(merged, styleColors);
+  }
+
+  if (Object.keys(merged).length === 0) {
+    return res.status(404).json({ error: `未找到风格"${style}"下的颜色配置` });
+  }
+
+  res.json(merged);
+});
+
+app.get('/getSvg', (req, res) => {
+  const keyword = req.query.keyword;
+  const size = req.query.size;
+  const style = req.query.style;
+  const color = req.query.color;
+
+  if (!keyword) {
+    return res.status(400).json({ error: 'keyword 参数必传' });
+  }
+  if (!size || !SIZES.includes(size)) {
+    return res.status(400).json({ error: `size 参数必传，可选值: ${SIZES.join(', ')}` });
+  }
+  if (!style || !STYLES.includes(style)) {
+    return res.status(400).json({ error: `style 参数必传，可选值: ${STYLES.join(', ')}` });
+  }
+  if (!color) {
+    return res.status(400).json({ error: 'color 参数必传' });
+  }
+
+  const result = findIcon(keyword);
+  if (!result.icon) {
+    return res.status(404).json({ error: `未找到匹配图标: "${keyword}"` });
+  }
+
+  const stroke = strokeConfig[style]?.[size] || '';
+  const finalSvg = modifySvg(result.icon.svg, size, color, stroke, style);
+
+  res.json(finalSvg);
+});
+
 app.get('/sse', (req, res) => {
   const transport = new SSEServerTransport('/messages', res);
   transports[transport.sessionId] = transport;
